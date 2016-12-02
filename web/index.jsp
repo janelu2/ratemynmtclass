@@ -18,8 +18,10 @@
         <p align="center">Look up your class!<br><br><input type="search"><input type="button" value="Search"></p>
         <%   
             if (session.getAttribute("userid") != null) {
-                String name=request.getParameter("userid");  
-                out.print("Welcome "+name);  
+                String name=(String) session.getAttribute("userid");  
+                out.print("Welcome " + name);  %>
+        <%@include  file="some.html" %>
+        <%      
             } else {
                 out.print("Sign up today!");
             }

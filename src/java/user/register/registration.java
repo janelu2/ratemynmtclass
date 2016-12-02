@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.RequestDispatcher;
+import java.sql.*;
+import javax.servlet.http.HttpSession;  
 
 /**
  *
@@ -72,21 +74,39 @@ public class registration extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-            String userID = request.getParameter("uid");
-            String password = request.getParameter("password1");
-            String password2 = request.getParameter("password2");
             
-            String url = "";
+            String user = request.getParameter("uid");    
+            String pwd = request.getParameter("password1");
+            String pwd2 = request.getParameter("password2");
+            String email = request.getParameter("email");
             
-            if (userID.isEmpty() || password.isEmpty() || password2.isEmpty()) {
-                url = "/signup.jsp";
+            response.setContentType("text/html");  
+            PrintWriter out = response.getWriter();  
+            request.getRequestDispatcher("signup.jsp").include(request, response);  
+            
+            if(user.equals("") || pwd.equals("") || pwd2.equals("") || email.equals("") || !(pwd.equals(pwd2))) {
+                    out.print("<strong><p style=color:red;>Error: missing fields/Passwords don't match<br></p></strong>");
             } else {
-                url = "/signup.jsp";
+                try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db", "root", [your password here]);
+                    Statement st = con.createStatement();
+                    //ResultSet rs;
+                    String command = "INSERT INTO users (username, password, email, privilege) VALUES ('" + user + "', ' " + pwd + "', '" + email +"', 0)";
+                    int i = st.executeUpdate(command);
+                    if (i > 0) {
+                        HttpSession session = request.getSession();
+                        session.setAttribute("userid", user);
+                        response.sendRedirect("index.jsp");
+                        // out.print("Registration Successfull!"+"<a href='index.jsp'>Go to Login</a>");
+                    } else {
+                        response.sendRedirect("signup.jsp");
+                    }
+                } catch (ClassNotFoundException | SQLException e) {
+                    //fuck
+                }                
             }
-            RequestDispatcher dispatcher = request.getRequestDispatcher(url);
-            dispatcher.forward(request, response);
-    }
+     }
 
     /**
      * Returns a short description of the servlet.

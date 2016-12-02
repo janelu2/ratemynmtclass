@@ -6,19 +6,16 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;  
-import java.sql.*;
-
 /**
  *
  * @author latta
  */
-public class login_check extends HttpServlet {
+public class LogoutServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +34,10 @@ public class login_check extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet login_check</title>");            
+            out.println("<title>Servlet LogoutServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet login_check at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet LogoutServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,7 +55,11 @@ public class login_check extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+            response.setContentType("text/html");  
+              
+            HttpSession session=request.getSession();  
+            session.invalidate();  
+            request.getRequestDispatcher("/index.html").forward(request, response);
     }
 
     /**
@@ -71,40 +72,9 @@ public class login_check extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-            String userID = request.getParameter("uid");
-            String password = request.getParameter("password");
-            
-            response.setContentType("text/html");  
-            PrintWriter out=response.getWriter();  
-            request.getRequestDispatcher("login.html").include(request, response);  
-
-            String userid = request.getParameter("uid");    
-            String pwd = request.getParameter("password");
-            try { 
-                Class.forName("com.mysql.jdbc.Driver");
-                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db", "root", [your password here]);
-                Statement st = con.createStatement();
-                ResultSet rs;
-                rs = st.executeQuery("select * from users where username='" + userid + "' and password='" + pwd + "'");
-                if (userID.isEmpty() || password.isEmpty()) {
-                   out.print("<strong><p style=color:red;>Error: missing fields <br></p></strong>");  
-                } else if (rs.next()) {
-                    HttpSession session = request.getSession();
-                    session.setAttribute("userid", userid);
-                    response.sendRedirect("index.jsp");
-                    //RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
-                    //dispatcher.forward(request, response); 
-                    //out.println("<a href='logout.jsp'>Log out</a>");
-                } else {
-                   out.print("<strong><p style=color:red;>Error: Incorrect Username/Password Combination <br></p></strong>");  
-                }
-            } catch (ClassNotFoundException | SQLException e){
-                //heh
-            }
-
-   
+            throws ServletException, IOException {    
+ 
+            //
     }
 
     /**
