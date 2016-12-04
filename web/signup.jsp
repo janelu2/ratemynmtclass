@@ -22,29 +22,6 @@
                 <%String password1=request.getParameter("password1");%>
                 <%String password2=request.getParameter("password2");%>
 
-                <%if(!(password1.equals(password2)) || uid.equals("")) {%>
-                <strong><p style="color:red;">Error: Passwords do not match or fields are blank<br></p></strong>
-                <%}%> 
-                <%@ page import ="java.sql.*" %>
-                <%
-                    String user = request.getParameter("uid");    
-                    String pwd = request.getParameter("password1");
-                    String email = request.getParameter("email");
-                    Class.forName("com.mysql.jdbc.Driver");
-                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db",
-                            "root", "BlackCat13");
-                    Statement st = con.createStatement();
-                    //ResultSet rs;
-                    String command = "INSERT INTO users (username, password, email, privilege) VALUES ('" + user + "', ' " + pwd + "', '" + email +"', 0)";
-                    int i = st.executeUpdate(command);
-                    if (i > 0) {
-                        session.setAttribute("userid", user);
-                        response.sendRedirect("index.jsp");
-                       // out.print("Registration Successfull!"+"<a href='index.jsp'>Go to Login</a>");
-                    } else {
-                        response.sendRedirect("signup.jsp");
-                    }
-                %>
                     <tr>
                         <td>Username: </td>
                         <td><input type="text" name="uid"></td>
