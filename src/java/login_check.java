@@ -11,6 +11,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;  
+import java.sql.*;
 
 /**
  *
@@ -74,22 +76,35 @@ public class login_check extends HttpServlet {
             String userID = request.getParameter("uid");
             String password = request.getParameter("password");
             
-            String url = "";
-            
-            /* session = request.getSession(true);
-            if(null == session.getAttribute("name")){
-              // User is not logged in.
-            }else{
-              // User IS logged in.
-            }*/
-            
-            if (userID.isEmpty() || password.isEmpty()) {
-                url = "/login.jsp";
-            } else {
-                url = "/login.jsp";
+            response.setContentType("text/html");  
+            PrintWriter out=response.getWriter();  
+            request.getRequestDispatcher("login.html").include(request, response);  
+
+            String userid = request.getParameter("uid");    
+            String pwd = request.getParameter("password");
+            try { 
+                Class.forName("com.mysql.jdbc.Driver");
+                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db", "root", [your password here]);
+                Statement st = con.createStatement();
+                ResultSet rs;
+                rs = st.executeQuery("select * from users where username='" + userid + "' and password='" + pwd + "'");
+                if (userID.isEmpty() || password.isEmpty()) {
+                   out.print("<strong><p style=color:red;>Error: missing fields <br></p></strong>");  
+                } else if (rs.next()) {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("userid", userid);
+                    response.sendRedirect("index.jsp");
+                    //RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+                    //dispatcher.forward(request, response); 
+                    //out.println("<a href='logout.jsp'>Log out</a>");
+                } else {
+                   out.print("<strong><p style=color:red;>Error: Incorrect Username/Password Combination <br></p></strong>");  
+                }
+            } catch (ClassNotFoundException | SQLException e){
+                //heh
             }
-            RequestDispatcher dispatcher = request.getRequestDispatcher(url);
-            dispatcher.forward(request, response);    
+
+   
     }
 
     /**
