@@ -6,19 +6,22 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.RequestDispatcher;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;  
-import java.sql.*;
+import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author latta
  */
-public class login_check extends HttpServlet {
+public class create_thread extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +40,10 @@ public class login_check extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet login_check</title>");            
+            out.println("<title>Servlet create_thread</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet login_check at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet create_thread at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -73,35 +76,30 @@ public class login_check extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-            String userID = request.getParameter("uid");
-            String password = request.getParameter("password");
+            String title = request.getParameter("title");
+            String course = request.getParameter("course");
+            String text = request.getParameter("text");
+            String uid = request.getParameter("uid");
             
             response.setContentType("text/html");  
             PrintWriter out=response.getWriter();  
-            request.getRequestDispatcher("login.html").include(request, response);  
-
-            String userid = request.getParameter("uid");    
-            String pwd = request.getParameter("password");
-            try { 
-                Class.forName("com.mysql.jdbc.Driver");
-                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db", "root", "BlackCat13");
-                Statement st = con.createStatement();
-                ResultSet rs;
-                rs = st.executeQuery("select * from users where username='" + userid + "' and password='" + pwd + "'");
-                if (userID.isEmpty() || password.isEmpty()) {
-                   out.print("<strong><p style=color:red;>Error: missing fields <br></p></strong>");  
-                } else if (rs.next()) {
-                    HttpSession session = request.getSession();
-                    session.setAttribute("userid", userid);
-                    response.sendRedirect("index.jsp");
-                    //RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
-                    //dispatcher.forward(request, response); 
-                    //out.println("<a href='logout.jsp'>Log out</a>");
-                } else {
-                   out.print("<strong><p style=color:red;>Error: Incorrect Username/Password Combination <br></p></strong>");  
-                }
-            } catch (ClassNotFoundException | SQLException e){
-                //heh
+            request.getRequestDispatcher("new_thread.jsp").include(request, response);  
+            if(title.equals("") || course.equals("") || text.equals("")) {
+                    out.print("<strong><p style=color:red;>Error: missing fields<br></p></strong>");
+            } else {
+                try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db", "root", "BlackCat13");
+                    Statement st = con.createStatement();
+                    String command = "INSERT INTO forum (title, author, class, deleted, summary) VALUES ('" + title + "', '" + uid + "', '" + course + "', 0, '" + text +"')";
+                    st.executeUpdate(command);
+                    ResultSet rs;
+                    rs = st.executeQuery("SELECT * from forum ORDER BY threadid DESC LIMIT 1;");
+                    rs.next();
+                    response.sendRedirect("thread_page.jsp?id=" + rs.getString("threadid"));
+                } catch (ClassNotFoundException | SQLException e) {
+                    out.println(e);
+                }              
             }
     }
 
