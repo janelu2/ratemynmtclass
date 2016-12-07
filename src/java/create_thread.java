@@ -1,5 +1,3 @@
-package user.register;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,19 +6,22 @@ package user.register;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.RequestDispatcher;
-import java.sql.*;
-import javax.servlet.http.HttpSession;  
+import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author latta
  */
-public class registration extends HttpServlet {
+public class create_thread extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +40,10 @@ public class registration extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet registration</title>");            
+            out.println("<title>Servlet create_thread</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet registration at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet create_thread at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -74,39 +75,33 @@ public class registration extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            
-            String user = request.getParameter("uid");    
-            String pwd = request.getParameter("password1");
-            String pwd2 = request.getParameter("password2");
-            String email = request.getParameter("email");
+
+            String title = request.getParameter("title");
+            String course = request.getParameter("course");
+            String text = request.getParameter("text");
+            String uid = request.getParameter("uid");
             
             response.setContentType("text/html");  
-            PrintWriter out = response.getWriter();  
-            request.getRequestDispatcher("signup.jsp").include(request, response);  
-            
-            if(user.equals("") || pwd.equals("") || pwd2.equals("") || email.equals("") || !(pwd.equals(pwd2))) {
-                    out.print("<strong><p style=color:red;>Error: missing fields/Passwords don't match<br></p></strong>");
+            PrintWriter out=response.getWriter();  
+            request.getRequestDispatcher("new_thread.jsp").include(request, response);  
+            if(title.equals("") || course.equals("") || text.equals("")) {
+                    out.print("<strong><p style=color:red;>Error: missing fields<br></p></strong>");
             } else {
                 try {
                     Class.forName("com.mysql.jdbc.Driver");
                     Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db", "root", "BlackCat13");
                     Statement st = con.createStatement();
-                    //ResultSet rs;
-                    String command = "INSERT INTO users (username, password, email, privilege) VALUES ('" + user + "', ' " + pwd + "', '" + email +"', 0)";
-                    int i = st.executeUpdate(command);
-                    if (i > 0) {
-                        HttpSession session = request.getSession();
-                        session.setAttribute("userid", user);
-                        response.sendRedirect("index.jsp");
-                        // out.print("Registration Successfull!"+"<a href='index.jsp'>Go to Login</a>");
-                    } else {
-                        response.sendRedirect("signup.jsp");
-                    }
+                    String command = "INSERT INTO forum (title, author, class, deleted, summary) VALUES ('" + title + "', '" + uid + "', '" + course + "', 0, '" + text +"')";
+                    st.executeUpdate(command);
+                    ResultSet rs;
+                    rs = st.executeQuery("SELECT * from forum ORDER BY threadid DESC LIMIT 1;");
+                    rs.next();
+                    response.sendRedirect("thread_page.jsp?id=" + rs.getString("threadid"));
                 } catch (ClassNotFoundException | SQLException e) {
-                    //fuck
-                }                
+                    out.println(e);
+                }              
             }
-     }
+    }
 
     /**
      * Returns a short description of the servlet.

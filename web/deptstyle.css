@@ -4,8 +4,19 @@ table {
     width: 100%;
 }
 
-table.fixed { table-layout:fixed; }
-table.fixed td { overflow: hidden; }
+textarea {
+    resize: none;
+}
+
+.response td:nth-child(1) {
+  width: 20%;
+}
+.response td:nth-child(2) {
+  width: 65%;
+}
+.response td:nth-child(3) {
+  width: 15%;
+}
 
 td, th {
     border: 1px solid #dddddd;

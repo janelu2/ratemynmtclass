@@ -84,7 +84,7 @@ public class login_check extends HttpServlet {
             String pwd = request.getParameter("password");
             try { 
                 Class.forName("com.mysql.jdbc.Driver");
-                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db", "root", [your password here]);
+                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db", "root", "BlackCat13");
                 Statement st = con.createStatement();
                 ResultSet rs;
                 rs = st.executeQuery("select * from users where username='" + userid + "' and password='" + pwd + "'");
@@ -103,8 +103,6 @@ public class login_check extends HttpServlet {
             } catch (ClassNotFoundException | SQLException e){
                 //heh
             }
-
-   
     }
 
     /**
