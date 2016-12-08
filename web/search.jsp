@@ -11,17 +11,13 @@
                 <li><a class="active" href="#home">Home</a></li>
                 <li><a href="depts.html">Department/Classes</a></li>
                 <li><a href="login.html">Login/Sign Up</a></li>
-                <li><a href="buysell.jsp">Buy/Sell</a></li>
+                <li><a href="buysell.html">Buy/Sell</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
         <br><br><br><br>
-        
-        
         <p align="center">Look up your class!<br><br>
             <input type="search" id="srch">
-        <form action="search_redirect" method="post">
-                <center><input type="submit" value="Search" name="meme"></center>
-        </form>
-        </p>
+            <input type="button" value="Search">
+        </p> 
     </body>
 </html>

@@ -112,6 +112,37 @@ public class registration extends HttpServlet {
                 }
             } catch (ClassNotFoundException | SQLException e) {
                 //fuck
+            
+            String user = request.getParameter("uid");    
+            String pwd = request.getParameter("password1");
+            String pwd2 = request.getParameter("password2");
+            String email = request.getParameter("email");
+            
+            response.setContentType("text/html");  
+            PrintWriter out = response.getWriter();  
+            request.getRequestDispatcher("signup.jsp").include(request, response);  
+            
+            if(user.equals("") || pwd.equals("") || pwd2.equals("") || email.equals("") || !(pwd.equals(pwd2))) {
+                    out.print("<strong><p style=color:red;>Error: missing fields/Passwords don't match<br></p></strong>");
+            } else {
+                try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db", "root", "d@rklight1");
+                    Statement st = con.createStatement();
+                    //ResultSet rs;
+                    String command = "INSERT INTO users (username, password, email, privilege) VALUES ('" + user + "', ' " + pwd + "', '" + email +"', 0)";
+                    int i = st.executeUpdate(command);
+                    if (i > 0) {
+                        HttpSession session = request.getSession();
+                        session.setAttribute("userid", user);
+                        response.sendRedirect("index.jsp");
+                        // out.print("Registration Successfull!"+"<a href='index.jsp'>Go to Login</a>");
+                    } else {
+                        response.sendRedirect("signup.jsp");
+                    }
+                } catch (ClassNotFoundException | SQLException e) {
+                    out.print("<strong><p style=color:red;>the fuck <br></p></strong>"); 
+                }                
             }
         }
     }

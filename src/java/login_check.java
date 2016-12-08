@@ -85,6 +85,7 @@ public class login_check extends HttpServlet {
             try { 
                 Class.forName("com.mysql.jdbc.Driver");
                 Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db", "root", "BlackCat13");
+                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db", "root", "d@rklight1");
                 Statement st = con.createStatement();
                 ResultSet rs;
                 rs = st.executeQuery("select * from users where username='" + userid + "' and password='" + pwd + "'");
@@ -101,7 +102,7 @@ public class login_check extends HttpServlet {
                    out.print("<strong><p style=color:red;>Error: Incorrect Username/Password Combination <br></p></strong>");  
                 }
             } catch (ClassNotFoundException | SQLException e){
-                //heh
+                out.print("<strong><p style=color:red;>the fuck <br></p></strong>"); 
             }
     }
 

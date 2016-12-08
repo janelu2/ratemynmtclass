@@ -20,6 +20,14 @@
         <servlet-name>LogoutServlet</servlet-name>
         <servlet-class>LogoutServlet</servlet-class>
     </servlet>
+     <servlet>
+        <servlet-name>showclass</servlet-name>
+        <servlet-class>showclass</servlet-class>
+    </servlet>
+     <servlet>
+        <servlet-name>search_redirect</servlet-name>
+        <servlet-class>search_redirect</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>NMTservlet</servlet-name>
         <url-pattern>/NMTservlet</url-pattern>
@@ -35,6 +43,14 @@
     <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
         <url-pattern>/LogoutServlet</url-pattern>
+    </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>showclass</servlet-name>
+        <url-pattern>/showclass</url-pattern>
+    </servlet-mapping>
+     <servlet-mapping>
+        <servlet-name>search_redirect</servlet-name>
+        <url-pattern>/search_redirect</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
